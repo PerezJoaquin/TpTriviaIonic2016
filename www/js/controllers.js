@@ -1,4 +1,4 @@
-angular.module('starter.controllers', [])
+angular.module('starter.controllers', ['ngCordova'])
 
 .controller('AppCtrl', function($scope, $ionicModal, $timeout) {
 
@@ -9,7 +9,7 @@ angular.module('starter.controllers', [])
   //$scope.$on('$ionicView.enter', function(e) {
   //});
 
-  //traer usuarios
+  //TRAER USUARIOS
     $scope.usuarios = [];
     var messagesRef = new Firebase('https://mifirebase-2c106.firebaseio.com/trivia/usuarios/');
     messagesRef.on('value', function (snapshot) { 
@@ -59,7 +59,6 @@ angular.module('starter.controllers', [])
       }
     });
     if($scope.loged == 1){
-      location.href = "./#/app/browse";
       $scope.closeLogin();
     }else{
       alert("Usuario incorrecto. Intente otra vez");
@@ -96,13 +95,11 @@ angular.module('starter.controllers', [])
     $scope.pregunta.push(message.pregunta4);
     console.log($scope.pregunta); 
     console.log($scope.indice); 
-
-    //$scope.flag = 0;
   });
 })
 
 
-.controller('PreguntaCtrl', function($scope) {
+.controller('PreguntaCtrl', function($scope, $cordovaVibration) {
   $scope.indice = Math.floor((Math.random() * 4));
   $scope.pregunta = [];
   var messagesRef = new Firebase('https://mifirebase-2c106.firebaseio.com/trivia/preguntas/');
@@ -114,24 +111,38 @@ angular.module('starter.controllers', [])
     $scope.pregunta.push(message.pregunta4);
     console.log($scope.pregunta); 
     console.log($scope.indice); 
-    //$scope.flag = 0;
+    $scope.responded = 0;
   });
 
 
 
   $scope.respuesta = function(boton){
     var acierto;
-    if($scope.pregunta[$scope.indice].verdad == boton){
-      //alert("verdadero");
-      //acierto = true;
-      //reproducir sonido y vibrar
-    }else{
-      //alert("falso");
-      //acierto = false;
-      //reproducir sonido y vibrar dis veces
+    if($scope.responded == 0){
+      if($scope.pregunta[$scope.indice].verdad == boton){
+        //alert("verdadero");
+        //reproducir sonido y vibrar
+        try{
+        // Vibrate 100ms
+          $cordovaVibration.vibrate(100);
+        } catch(e){
+          alert("error");
+        }    
+      }else{
+        //alert("falso");
+        //reproducir sonido y vibrar dis veces
+        try{
+          $cordovaVibration.vibrate(1000);
+          setTimeout(function(){ $cordovaVibration.vibrate(0); }, 100);
+          setTimeout(function(){ $cordovaVibration.vibrate(100); }, 200);
+        } catch(e){
+          alert("error");
+        }    
+      }
     }
+      
 
-    //cambio de color
+    //CAMBIO DE COLOR
     document.getElementById("bt1").className = "button button-block button-assertive";
     document.getElementById("bt2").className = "button button-block button-assertive";
     document.getElementById("bt3").className = "button button-block button-assertive";
@@ -146,52 +157,49 @@ angular.module('starter.controllers', [])
         document.getElementById("bt3").className = "button button-block button-balanced";
         break;
     }
-    //console.log(document.getElementById("bt3").className);
-    //document.getElementById("bt3").className = "button button-block button-balanced";
+    //BUTTON OUTLINE
+    if($scope.responded == 0){
+      switch(boton){
+        case 1:
+          document.getElementById("bt1").style = "border: 2px solid #000000";
+          break;
+        case 2:
+          document.getElementById("bt2").style = "border: 2px solid #000000";
+          break;
+        case 3:
+          document.getElementById("bt3").style = "border: 2px solid #000000";
+          break;
+      }
+    }
     document.getElementById("texto").innerHTML  = "<center><h4><--  Deslice para nueva pregunta  <--</h4></center>";
     document.getElementById("texto").className = "bar bar-footer footerHH";
     document.getElementById("pregg").className = "card";
-    //document.getElementById("cont").className = " ";
-    $scope.flag = 1;
 
-    /*setTimeout(function () {
-      
-      $scope.indice = ind;
-      console.log(ind);
-      document.getElementById("bt3").className = "button button-block button-stable";
-      
-    }, 2000);*/
+    //SE RESPONDIÓ LA PREGUNTA
+    $scope.responded = 1;
   }
 
   $scope.nPregunta = function(){
     //CAMBIAR PREGUNTA
     var ind = Math.floor((Math.random() * 3));
     var oldInd = $scope.indice;
-    //console.log("ran " +ind); 
+    //NO ELEGIR LA MISMA PREGUNTA EN LA QEU SE ESTÁ
     while(ind == $scope.indice){
-      ind = Math.floor((Math.random() * 3));
-      //console.log("ran " +ind); 
+      ind = Math.floor((Math.random() * 3)); 
     }
-    if($scope.flag == 1){
-      $scope.flag = 0;
+    //NO CAMBIAR PREGUNTA SI NO SE RESPONDIÓ
+    if($scope.responded == 1){
+      $scope.responded = 0;
       $scope.indice = ind;
     }
-    
-    //document.getElementById("pregTemp").reload();
-    console.log(location.href);
-    /*if(oldInd ){
-      console.log("ch " + $scope.flag);
-      $scope.flag = 1;
-      location.href = "./#/app/search2";   
-    }else{
-      console.log("chhhh " + $scope.flag);
-      $scope.flag = 0;
-      location.href = "./#/app/search";
-    }*/
+    //RESTAURAR COLOR Y TAMAÑO/ELIMINAR FOOTER
     document.getElementById("pregg").className = "card slidein";
     document.getElementById("bt1").className = "button button-block button-stable slidein";
     document.getElementById("bt2").className = "button button-block button-stable slidein";
     document.getElementById("bt3").className = "button button-block button-stable slidein";
+    document.getElementById("bt1").style = " ";
+    document.getElementById("bt2").style = " ";
+    document.getElementById("bt3").style = " ";
     document.getElementById("texto").innerHTML  = "";
     document.getElementById("texto").className = "";
   }
