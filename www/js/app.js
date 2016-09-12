@@ -41,6 +41,15 @@ angular.module('starter', ['ionic', 'starter.controllers'])
       }
     }
   })
+  .state('app.search2', {
+    url: '/search2',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/search2.html',
+          controller: 'PreguntaCtrl'
+      }
+    }
+  })
 
   .state('app.browse', {
       url: '/browse',

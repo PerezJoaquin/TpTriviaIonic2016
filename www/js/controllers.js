@@ -9,6 +9,21 @@ angular.module('starter.controllers', [])
   //$scope.$on('$ionicView.enter', function(e) {
   //});
 
+  //traer usuarios
+    $scope.usuarios = [];
+    var messagesRef = new Firebase('https://mifirebase-2c106.firebaseio.com/trivia/usuarios/');
+    messagesRef.on('value', function (snapshot) { 
+      var message = snapshot.val();
+      for(var index in message) { 
+         if (message.hasOwnProperty(index)) {
+             var attr = message[index];
+             $scope.usuarios.push(attr);
+         }
+      }
+      //$scope.usuarios.push(message);
+      console.log($scope.usuarios); 
+    });
+
   // Form data for the login modal
   $scope.loginData = {};
 
@@ -32,12 +47,30 @@ angular.module('starter.controllers', [])
   // Perform the login action when the user submits the login form
   $scope.doLogin = function() {
     console.log('Doing login', $scope.loginData);
+    
+    var usu = $scope.loginData.username;
+    console.log(usu);
+    console.log($scope.usuarios);
+    $scope.loged = 0;
+    $scope.usuarios.forEach(function(item, index) {
+      console.log(item);
+      if(item == usu && $scope.loged == 0){
+        $scope.loged = 1;
+      }
+    });
+    if($scope.loged == 1){
+      location.href = "./#/app/browse";
+      $scope.closeLogin();
+    }else{
+      alert("Usuario incorrecto. Intente otra vez");
+    }
+   
 
     // Simulate a login delay. Remove this and replace with your login
     // code if using a login system
-    $timeout(function() {
+    /*$timeout(function() {
       $scope.closeLogin();
-    }, 1000);
+    }, 1000);*/
   };
 })
 
@@ -63,6 +96,8 @@ angular.module('starter.controllers', [])
     $scope.pregunta.push(message.pregunta4);
     console.log($scope.pregunta); 
     console.log($scope.indice); 
+
+    //$scope.flag = 0;
   });
 })
 
@@ -79,6 +114,7 @@ angular.module('starter.controllers', [])
     $scope.pregunta.push(message.pregunta4);
     console.log($scope.pregunta); 
     console.log($scope.indice); 
+    //$scope.flag = 0;
   });
 
 
@@ -86,11 +122,11 @@ angular.module('starter.controllers', [])
   $scope.respuesta = function(boton){
     var acierto;
     if($scope.pregunta[$scope.indice].verdad == boton){
-      alert("verdadero");
+      //alert("verdadero");
       //acierto = true;
       //reproducir sonido y vibrar
     }else{
-      alert("falso");
+      //alert("falso");
       //acierto = false;
       //reproducir sonido y vibrar dis veces
     }
@@ -112,9 +148,11 @@ angular.module('starter.controllers', [])
     }
     //console.log(document.getElementById("bt3").className);
     //document.getElementById("bt3").className = "button button-block button-balanced";
-    document.getElementById("texto").innerHTML  = "<br><br><center><h4>Deslice para nueva pregunta ---></h4></center><br><br>";
-    document.getElementById("texto").className = "item item-divider";
-      
+    document.getElementById("texto").innerHTML  = "<center><h4><--  Deslice para nueva pregunta  <--</h4></center>";
+    document.getElementById("texto").className = "bar bar-footer footerHH";
+    document.getElementById("pregg").className = "card";
+    //document.getElementById("cont").className = " ";
+    $scope.flag = 1;
 
     /*setTimeout(function () {
       
@@ -128,19 +166,38 @@ angular.module('starter.controllers', [])
   $scope.nPregunta = function(){
     //CAMBIAR PREGUNTA
     var ind = Math.floor((Math.random() * 3));
+    var oldInd = $scope.indice;
     //console.log("ran " +ind); 
     while(ind == $scope.indice){
       ind = Math.floor((Math.random() * 3));
       //console.log("ran " +ind); 
     }
-    $scope.indice = ind;
-    document.getElementById("bt1").className = "button button-block button-stable";
-    document.getElementById("bt2").className = "button button-block button-stable";
-    document.getElementById("bt3").className = "button button-block button-stable";
+    if($scope.flag == 1){
+      $scope.flag = 0;
+      $scope.indice = ind;
+    }
+    
+    //document.getElementById("pregTemp").reload();
+    console.log(location.href);
+    /*if(oldInd ){
+      console.log("ch " + $scope.flag);
+      $scope.flag = 1;
+      location.href = "./#/app/search2";   
+    }else{
+      console.log("chhhh " + $scope.flag);
+      $scope.flag = 0;
+      location.href = "./#/app/search";
+    }*/
+    document.getElementById("pregg").className = "card slidein";
+    document.getElementById("bt1").className = "button button-block button-stable slidein";
+    document.getElementById("bt2").className = "button button-block button-stable slidein";
+    document.getElementById("bt3").className = "button button-block button-stable slidein";
     document.getElementById("texto").innerHTML  = "";
     document.getElementById("texto").className = "";
   }
 })
+
+
 
 .controller('PlaylistCtrl', function($scope, $stateParams) {
 });

@@ -1,22 +1,26 @@
 <ion-view view-title="Trivia" on-swipe-left="nPregunta()">
-  <ion-content>
+  <ion-content class="" id="cont">
+  <!--<iframe src="#/app/browse"></iframe>-->
   	<!--<div class="list card" ng-repeat="pregunta in paisesAmerica[0]">-->
-  	<br>
-   	<div class="card">
-        <center><h1>{{pregunta[indice].pre}}</h1></center>
-    </div>
-      <div id="texto"> </div>
-    <br>
-    <button class="button button-block button-stable" id="bt1" ng-click="respuesta(1)">
-	  <center>{{pregunta[indice].res1}}</center>
-  	</button>
-  	<button class="button button-block button-stable" id="bt2" ng-click="respuesta(2)">
-  	  <center>{{pregunta[indice].res2}}</center>
-  	</button>
-  	<button class="button button-block button-stable" id="bt3" ng-click="respuesta(3)">
-  	  <center>{{pregunta[indice].res3}}</center>
-  	</button>
-
+  	<br>    
+     	<div class="card slidein" id="pregg">
+          <center><h1>{{pregunta[indice].pre}}</h1></center>
+      </div>
+      <br>
+      <button class="button button-block button-stable slidein" id="bt1" ng-click="respuesta(1)">
+  	  <center>{{pregunta[indice].res1}}</center>
+    	</button>
+    	<button class="button button-block button-stable slidein" id="bt2" ng-click="respuesta(2)">
+    	  <center>{{pregunta[indice].res2}}</center>
+    	</button>
+    	<button class="button button-block button-stable slidein" id="bt3" ng-click="respuesta(3)">
+    	  <center>{{pregunta[indice].res3}}</center>
+    	</button>
+      <br>
+      <!--<div id="texto"> </div>-->
+      <div class=" " id="texto">
+      </div>
+     
     <!--<br><br>
     <button class="button button-dark" id="aa" ng-click="nPregunta()">
       <center>Proxima pregunta</center>
@@ -25,3 +29,5 @@
     <button on-swipe-down="nPregunta()" class="button">Test</button>-->
   </ion-content>
 </ion-view>
+
+
