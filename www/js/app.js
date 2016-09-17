@@ -19,7 +19,35 @@ angular.module('starter', ['ionic', 'starter.controllers', 'ngCordova'])
       // org.apache.cordova.statusbar required
       StatusBar.styleDefault();
     }
+
+    //CARGAR AUDIOS
+    if( window.plugins && window.plugins.NativeAudio ) {
+      window.plugins.NativeAudio.preloadSimple( 'success', 'audio/success.mp3', function(msg){
+      }, function(msg){
+          console.log( 'succes error: ' + msg );
+      });
+      window.plugins.NativeAudio.preloadSimple( 'fail', 'audio/fail.mp3', function(msg){
+      }, function(msg){
+          console.log( 'fail error: ' + msg );
+      });
+    }
+      /*$cordovaNativeAudio
+        .preloadSimple('success', 'audio/success.mp3')
+        .then(function (msg) {
+          console.log(msg);
+        }, function (error) {
+          alert(error);
+        });
+      $cordovaNativeAudio
+        .preloadSimple('fail', 'audio/fail.mp3')
+        .then(function (msg) {
+          console.log(msg);
+        }, function (error) {
+          alert(error);
+        });*/
   });
+
+
 })
 
 .config(function($stateProvider, $urlRouterProvider) {
@@ -38,6 +66,24 @@ angular.module('starter', ['ionic', 'starter.controllers', 'ngCordova'])
       'menuContent': {
         templateUrl: 'templates/search.html',
           controller: 'PreguntaCtrl'
+      }
+    }
+  })
+  .state('app.piano', {
+    url: '/piano',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/piano.html',
+          controller: 'PianoCtrl'
+      }
+    }
+  })
+  .state('app.imagen', {
+    url: '/imagen',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/imagen_mov.html',
+          controller: 'ImgCrtl'
       }
     }
   })

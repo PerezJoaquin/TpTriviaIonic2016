@@ -96,6 +96,8 @@ angular.module('starter.controllers', ['ngCordova'])
     console.log($scope.pregunta); 
     console.log($scope.indice); 
   });
+
+  
 })
 
 
@@ -114,30 +116,40 @@ angular.module('starter.controllers', ['ngCordova'])
     $scope.responded = 0;
   });
 
-
-
   $scope.respuesta = function(boton){
     var acierto;
     if($scope.responded == 0){
       if($scope.pregunta[$scope.indice].verdad == boton){
-        //alert("verdadero");
-        //reproducir sonido y vibrar
+        //sonido    
+        try{
+          window.plugins.NativeAudio.play( 'success' );
+        }catch(e){
+          alert("Error success");
+        }
+        //vibrar
         try{
         // Vibrate 100ms
           $cordovaVibration.vibrate(100);
         } catch(e){
-          alert("error");
-        }    
+          alert("Error vibrar");
+        }
+        
       }else{
-        //alert("falso");
-        //reproducir sonido y vibrar dis veces
+        //sonido
+        try{
+          window.plugins.NativeAudio.play( 'fail' );
+        }catch(e){
+          alert("Error fail");
+        }
+        //vibrar
         try{
           $cordovaVibration.vibrate(1000);
           setTimeout(function(){ $cordovaVibration.vibrate(0); }, 100);
           setTimeout(function(){ $cordovaVibration.vibrate(100); }, 200);
         } catch(e){
-          alert("error");
+          alert("Error vibrar");
         }    
+        
       }
     }
       
@@ -161,13 +173,13 @@ angular.module('starter.controllers', ['ngCordova'])
     if($scope.responded == 0){
       switch(boton){
         case 1:
-          document.getElementById("bt1").style = "border: 2px solid #000000";
+          document.getElementById("bt1").style = "border: 2px solid #ffffff";
           break;
         case 2:
-          document.getElementById("bt2").style = "border: 2px solid #000000";
+          document.getElementById("bt2").style = "border: 2px solid #ffffff";
           break;
         case 3:
-          document.getElementById("bt3").style = "border: 2px solid #000000";
+          document.getElementById("bt3").style = "border: 2px solid #ffffff";
           break;
       }
     }
@@ -177,12 +189,14 @@ angular.module('starter.controllers', ['ngCordova'])
 
     //SE RESPONDIÓ LA PREGUNTA
     $scope.responded = 1;
+
+    //MANDAR PREGUNTA, RESPUESTAS POSIBLES, Y RESPUESTA ELEGIDA AL PERFIL DEL USUARIO EN FIREBASE
   }
 
   $scope.nPregunta = function(){
     //CAMBIAR PREGUNTA
     var ind = Math.floor((Math.random() * 3));
-    var oldInd = $scope.indice;
+    //var oldInd = $scope.indice;
     //NO ELEGIR LA MISMA PREGUNTA EN LA QEU SE ESTÁ
     while(ind == $scope.indice){
       ind = Math.floor((Math.random() * 3)); 
@@ -206,6 +220,11 @@ angular.module('starter.controllers', ['ngCordova'])
 })
 
 
+.controller('PianoCtrl', function($scope, $stateParams) {
+})
+
+.controller('ImgCrtl', function($scope, $stateParams) {
+})
 
 .controller('PlaylistCtrl', function($scope, $stateParams) {
 });
