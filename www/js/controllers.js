@@ -31,6 +31,20 @@ angular.module('starter.controllers', ['ngCordova'])
       console.log($scope.usuarios); 
     });
 
+    //traer preguntas
+    $scope.indice = Math.floor((Math.random() * 4));
+    $scope.pregunta = [];
+    var messagesRef = new Firebase('https://mifirebase-2c106.firebaseio.com/trivia/preguntas/');
+    messagesRef.on('value', function (snapshot) { 
+      var message = snapshot.val();
+      $scope.pregunta.push(message.pregunta1);
+      $scope.pregunta.push(message.pregunta2);
+      $scope.pregunta.push(message.pregunta3);
+      $scope.pregunta.push(message.pregunta4);
+      console.log($scope.pregunta); 
+      console.log($scope.indice);
+    });
+
   // Form data for the login modal
   /*$scope.loginData = {};
 
@@ -80,14 +94,14 @@ angular.module('starter.controllers', ['ngCordova'])
   };*/
 })
 
-.controller('Login', function($scope, $ionicModal) {
+.controller('Login', function($scope, $rootScope) {
   $scope.doLogin = function() {
     var usu = document.getElementById("usuario").value.toLowerCase();
     console.log(usu);
     $scope.loged = 0;
     $scope.usuarios.forEach(function(item, index) {
       console.log(item);
-      if(item == usu && $scope.loged == 0){
+      if(item.nombre == usu && $scope.loged == 0){
         $scope.loged = 1;
       }
     });
@@ -95,9 +109,9 @@ angular.module('starter.controllers', ['ngCordova'])
       $scope.logusu = usu;
       document.getElementById("LogedUsu").className = "card";
       document.getElementById("LogedUsu").innerHTML  = "<center><h4>Usuario Actual: " + usu + "</h4></center>";
-      UsuarioLogueado.UsuarioLog = usu;
-      Loged = 1;
-      console.log(Loged);
+      //UsuarioLogueado.UsuarioLog = usu;
+      $rootScope.Loged = 1;
+      $rootScope.LogedUsu = usu;
 
       //$scope.closeLogin();
       //$scope.modal.hide();
@@ -108,22 +122,11 @@ angular.module('starter.controllers', ['ngCordova'])
 })
 
 .controller('CargarTrivia', function($scope) {
-  $scope.indice = Math.floor((Math.random() * 4));
-  $scope.pregunta = [];
-  var messagesRef = new Firebase('https://mifirebase-2c106.firebaseio.com/trivia/preguntas/');
-  messagesRef.on('value', function (snapshot) { 
-    var message = snapshot.val();
-    $scope.pregunta.push(message.pregunta1);
-    $scope.pregunta.push(message.pregunta2);
-    $scope.pregunta.push(message.pregunta3);
-    $scope.pregunta.push(message.pregunta4);
-    console.log($scope.pregunta); 
-    console.log($scope.indice); 
-  });
+  
 })
 
 
-.controller('PreguntaCtrl',['UsuarioLogueado', function($scope, $cordovaVibration) {
+.controller('PreguntaCtrl', function($scope, $cordovaVibration, $rootScope) {
   $scope.indice = Math.floor((Math.random() * 4));
   $scope.pregunta = [];
   var messagesRef = new Firebase('https://mifirebase-2c106.firebaseio.com/trivia/preguntas/');
@@ -137,19 +140,16 @@ angular.module('starter.controllers', ['ngCordova'])
     console.log($scope.indice); 
     $scope.responded = 0;
   });
-
-  
-  if($scope.Loged != 1){
-    alert(UsuarioLogueado.UsuarioLog);
+  /*if($rootScope.Loged != 1){
+    //alert($rootScope.LogedUsu);
     document.getElementById("texto").innerHTML  = "<center><h4><br><br><br><br>Debe loguearse para poder jugar</h4></center>";
     document.getElementById("texto").className = "bar bar-footer footerNL";
   }else{
-    document.getElementById("texto").innerHTML  = "";
-    document.getElementById("texto").className = "";
-  }
+    document.getElementById("texto").innerHTML  = " ";
+    document.getElementById("texto").className = " ";
+  }*/
 
   $scope.respuesta = function(boton){
-    var acierto;
     if($scope.responded == 0){
       if($scope.pregunta[$scope.indice].verdad == boton){
         //sonido    
@@ -223,6 +223,11 @@ angular.module('starter.controllers', ['ngCordova'])
     $scope.responded = 1;
 
     //MANDAR PREGUNTA, RESPUESTAS POSIBLES, Y RESPUESTA ELEGIDA AL PERFIL DEL USUARIO EN FIREBASE
+    if($rootScope.Loged == 1){
+      var saveUser = new Firebase('https://mifirebase-2c106.firebaseio.com/trivia/usuarios/' + $rootscope.LogedUsu + '/');
+      saveUser.push(4);
+    }
+    
   }
 
   $scope.nPregunta = function(){
@@ -249,7 +254,7 @@ angular.module('starter.controllers', ['ngCordova'])
     document.getElementById("texto").innerHTML  = "";
     document.getElementById("texto").className = "";
   }
-}])
+})
 
 
 /**.controller('PianoCtrl', function($scope, $stateParams) {

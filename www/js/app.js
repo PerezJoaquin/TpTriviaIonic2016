@@ -6,12 +6,12 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('starter', ['ionic', 'starter.controllers', 'ngCordova'])
 
-.value('UsuarioLogueado', {
+/*.value('UsuarioLogueado', {
   UsuarioLog:null
 })
 .value('Loged', {
   log:null
-})
+})*/
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
