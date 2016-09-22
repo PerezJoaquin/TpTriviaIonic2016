@@ -6,6 +6,13 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('starter', ['ionic', 'starter.controllers', 'ngCordova'])
 
+.value('UsuarioLogueado', {
+  UsuarioLog:null
+})
+.value('Loged', {
+  log:null
+})
+
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -69,7 +76,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'ngCordova'])
       }
     }
   })
-  .state('app.piano', {
+  /*.state('app.piano', {
     url: '/piano',
     views: {
       'menuContent': {
@@ -77,13 +84,13 @@ angular.module('starter', ['ionic', 'starter.controllers', 'ngCordova'])
           controller: 'PianoCtrl'
       }
     }
-  })
-  .state('app.imagen', {
-    url: '/imagen',
+  })*/
+  .state('app.login', {
+    url: '/login',
     views: {
       'menuContent': {
-        templateUrl: 'templates/imagen_mov.html',
-          controller: 'ImgCrtl'
+        templateUrl: 'templates/login.html',
+          controller: 'Login'
       }
     }
   })
@@ -117,5 +124,5 @@ angular.module('starter', ['ionic', 'starter.controllers', 'ngCordova'])
     }
   });
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/app/browse');
+  $urlRouterProvider.otherwise('/app/login');
 });

@@ -1,5 +1,12 @@
 angular.module('starter.controllers', ['ngCordova'])
 
+/*.value('UsuarioLogueado', {
+  UsuarioLog:null
+})
+.value('Loged', {
+  log:null
+})*/
+
 .controller('AppCtrl', function($scope, $ionicModal, $timeout) {
 
   // With the new view caching in Ionic, Controllers are only called
@@ -25,7 +32,7 @@ angular.module('starter.controllers', ['ngCordova'])
     });
 
   // Form data for the login modal
-  $scope.loginData = {};
+  /*$scope.loginData = {};
 
   // Create the login modal that we will use later
   $ionicModal.fromTemplateUrl('templates/login.html', {
@@ -37,7 +44,7 @@ angular.module('starter.controllers', ['ngCordova'])
   // Triggered in the login modal to close it
   $scope.closeLogin = function() {
     $scope.modal.hide();
-  };
+  };*
 
   // Open the login modal
   $scope.login = function() {
@@ -48,9 +55,7 @@ angular.module('starter.controllers', ['ngCordova'])
   $scope.doLogin = function() {
     console.log('Doing login', $scope.loginData);
     
-    var usu = $scope.loginData.username;
-    console.log(usu);
-    console.log($scope.usuarios);
+    var usu = $scope.loginData.username.toLowerCase();
     $scope.loged = 0;
     $scope.usuarios.forEach(function(item, index) {
       console.log(item);
@@ -59,7 +64,9 @@ angular.module('starter.controllers', ['ngCordova'])
       }
     });
     if($scope.loged == 1){
-      $scope.closeLogin();
+      $scope.logusu = usu;
+      //$scope.closeLogin();
+      $scope.modal.hide();
     }else{
       alert("Usuario incorrecto. Intente otra vez");
     }
@@ -69,20 +76,37 @@ angular.module('starter.controllers', ['ngCordova'])
     // code if using a login system
     /*$timeout(function() {
       $scope.closeLogin();
-    }, 1000);*/
+    }, 1000);*
+  };*/
+})
+
+.controller('Login', function($scope, $ionicModal) {
+  $scope.doLogin = function() {
+    var usu = document.getElementById("usuario").value.toLowerCase();
+    console.log(usu);
+    $scope.loged = 0;
+    $scope.usuarios.forEach(function(item, index) {
+      console.log(item);
+      if(item == usu && $scope.loged == 0){
+        $scope.loged = 1;
+      }
+    });
+    if($scope.loged == 1){
+      $scope.logusu = usu;
+      document.getElementById("LogedUsu").className = "card";
+      document.getElementById("LogedUsu").innerHTML  = "<center><h4>Usuario Actual: " + usu + "</h4></center>";
+      UsuarioLogueado.UsuarioLog = usu;
+      Loged = 1;
+      console.log(Loged);
+
+      //$scope.closeLogin();
+      //$scope.modal.hide();
+    }else{
+      alert("Usuario incorrecto. Intente otra vez");
+    }
   };
 })
 
-.controller('PlaylistsCtrl', function($scope) {
-  $scope.playlists = [
-    { title: 'Reggae', id: 1 },
-    { title: 'Chill', id: 2 },
-    { title: 'Dubstep', id: 3 },
-    { title: 'Indie', id: 4 },
-    { title: 'Rap', id: 5 },
-    { title: 'Cowbell', id: 6 }
-  ];
-})
 .controller('CargarTrivia', function($scope) {
   $scope.indice = Math.floor((Math.random() * 4));
   $scope.pregunta = [];
@@ -96,12 +120,10 @@ angular.module('starter.controllers', ['ngCordova'])
     console.log($scope.pregunta); 
     console.log($scope.indice); 
   });
-
-  
 })
 
 
-.controller('PreguntaCtrl', function($scope, $cordovaVibration) {
+.controller('PreguntaCtrl',['UsuarioLogueado', function($scope, $cordovaVibration) {
   $scope.indice = Math.floor((Math.random() * 4));
   $scope.pregunta = [];
   var messagesRef = new Firebase('https://mifirebase-2c106.firebaseio.com/trivia/preguntas/');
@@ -116,6 +138,16 @@ angular.module('starter.controllers', ['ngCordova'])
     $scope.responded = 0;
   });
 
+  
+  if($scope.Loged != 1){
+    alert(UsuarioLogueado.UsuarioLog);
+    document.getElementById("texto").innerHTML  = "<center><h4><br><br><br><br>Debe loguearse para poder jugar</h4></center>";
+    document.getElementById("texto").className = "bar bar-footer footerNL";
+  }else{
+    document.getElementById("texto").innerHTML  = "";
+    document.getElementById("texto").className = "";
+  }
+
   $scope.respuesta = function(boton){
     var acierto;
     if($scope.responded == 0){
@@ -124,7 +156,7 @@ angular.module('starter.controllers', ['ngCordova'])
         try{
           window.plugins.NativeAudio.play( 'success' );
         }catch(e){
-          alert("Error success");
+          alert("Error Sonido success");
         }
         //vibrar
         try{
@@ -139,7 +171,7 @@ angular.module('starter.controllers', ['ngCordova'])
         try{
           window.plugins.NativeAudio.play( 'fail' );
         }catch(e){
-          alert("Error fail");
+          alert("Error Sonido fail");
         }
         //vibrar
         try{
@@ -217,14 +249,14 @@ angular.module('starter.controllers', ['ngCordova'])
     document.getElementById("texto").innerHTML  = "";
     document.getElementById("texto").className = "";
   }
-})
+}])
 
 
-.controller('PianoCtrl', function($scope, $stateParams) {
+/**.controller('PianoCtrl', function($scope, $stateParams) {
 })
 
 .controller('ImgCrtl', function($scope, $stateParams) {
-})
+})*/
 
 .controller('PlaylistCtrl', function($scope, $stateParams) {
 });
