@@ -112,6 +112,7 @@ angular.module('starter.controllers', ['ngCordova'])
       //UsuarioLogueado.UsuarioLog = usu;
       $rootScope.Loged = 1;
       $rootScope.LogedUsu = usu;
+      console.log($rootScope);
 
       //$scope.closeLogin();
       //$scope.modal.hide();
@@ -136,8 +137,8 @@ angular.module('starter.controllers', ['ngCordova'])
     $scope.pregunta.push(message.pregunta2);
     $scope.pregunta.push(message.pregunta3);
     $scope.pregunta.push(message.pregunta4);
-    console.log($scope.pregunta); 
-    console.log($scope.indice); 
+    /*console.log($scope.pregunta); 
+    console.log($scope.indice); */
     $scope.responded = 0;
   });
   /*if($rootScope.Loged != 1){
@@ -223,9 +224,17 @@ angular.module('starter.controllers', ['ngCordova'])
     $scope.responded = 1;
 
     //MANDAR PREGUNTA, RESPUESTAS POSIBLES, Y RESPUESTA ELEGIDA AL PERFIL DEL USUARIO EN FIREBASE
+    //console.log("logueado: " + $rootScope.Loged);
     if($rootScope.Loged == 1){
-      var saveUser = new Firebase('https://mifirebase-2c106.firebaseio.com/trivia/usuarios/' + $rootscope.LogedUsu + '/');
-      saveUser.push(4);
+      var saveUser = new Firebase('https://mifirebase-2c106.firebaseio.com/trivia/usuarios/' + $rootScope.LogedUsu + '/');
+      saveUser.push({
+        "-Pregunta": $scope.pregunta[$scope.indice].pre,
+        "Opcion1": $scope.pregunta[$scope.indice].res1,
+        "Opcion2": $scope.pregunta[$scope.indice].res2,
+        "Opcion3": $scope.pregunta[$scope.indice].res3,
+        "Respuesta": $scope.pregunta[$scope.indice].verdad,
+        "Opción_elegida": boton
+      });
     }
     
   }
