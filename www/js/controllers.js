@@ -88,7 +88,7 @@ angular.module('starter.controllers', ['ngCordova'])
     $scope.responded = 0;
   });
 
-  var jsonRes = { };
+  $rootScope.jsonRes = { };
   var count = 0;
 
   $scope.respuesta = function(boton){
@@ -175,14 +175,16 @@ angular.module('starter.controllers', ['ngCordova'])
         "Respuesta": $scope.pregunta[$scope.indice].verdad,
         "Opción_elegida": boton
       });
-      jsonSec[count + "pregunta"] = {
-        "-Pregunta": $scope.pregunta[$scope.indice].pre,
+      $rootScope.jsonRes[count + "pregunta"] = {
+        "-Usuario": $rootScope.LogedUsu,
+        "Pregunta": $scope.pregunta[$scope.indice].pre,
         "Opcion1": $scope.pregunta[$scope.indice].res1,
         "Opcion2": $scope.pregunta[$scope.indice].res2,
         "Opcion3": $scope.pregunta[$scope.indice].res3,
         "Respuesta": $scope.pregunta[$scope.indice].verdad,
         "Opción_elegida": boton
       };
+      //alert(JSON.stringify($rootScope.jsonRes));
     }
     
   }
@@ -212,25 +214,24 @@ angular.module('starter.controllers', ['ngCordova'])
 
     //GUARDAR ARCHIVO
     try{
-      var secuencia = $scope.secuencia.toString();
-      $cordovaFile.writeFile(cordova.file.dataDirectory, "json.txt", JSON.stringify(jsonSec), true)
+      $cordovaFile.writeFile(cordova.file.dataDirectory, "json.txt", JSON.stringify($rootScope.jsonRes), true)
       .then(function (success) {
-        alert(JSON.stringify(jsonSec));
+        //alert(JSON.stringify(jsonRes));
       }, function (error) {
         alert("error escritura");
       });
     }catch(e){
-      console.log("No es dispositivo movil. No se escribió archivo");
+      alert("No es dispositivo movil. No se escribió archivo");
     }  
   }
 })
 
-.controller('PlaylistsCtrl', function($scope, $cordovaFile) {
+.controller('PlaylistsCtrl', function($scope, $cordovaFile, $rootScope) {
   $scope.reload = function(){
     try{
       $cordovaFile.readAsText(cordova.file.dataDirectory, "json.txt")
       .then(function (success) {
-        alert(success);
+        //alert(success);
         $scope.json = /*JSON.parse(*/success/*)*/;
       }, function (error) {
         alert("Error lectura");
@@ -238,5 +239,18 @@ angular.module('starter.controllers', ['ngCordova'])
     }catch(e){
 
     }
+  }
+  $scope.reset = function(){
+    $rootScope.jsonRes = { };
+    try{
+      $cordovaFile.writeFile(cordova.file.dataDirectory, "json.txt", " ", true)
+      .then(function (success) {
+        //alert(JSON.stringify(jsonRes));
+      }, function (error) {
+        alert("error escritura");
+      });
+    }catch(e){
+      alert("No es dispositivo movil. No se escribió archivo");
+    }  
   }
 });
