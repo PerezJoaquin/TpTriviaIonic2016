@@ -1,10 +1,10 @@
-<ion-view view-title="Datos Creador">
+<ion-view view-title="Mostrar Json">
   <ion-content>
-    <ion-list>
-      <!--<ion-item ng-repeat="playlist in playlists" href="#/app/playlists/{{playlist.id}}">
-        {{playlist.title}}
-      </ion-item>-->
-      <h2>datos</h2>
-    </ion-list>
+    <div class="card slidein">
+    	<center>
+    		<h2>{{json}}</h2> <br>
+    	</center>
+    </div>
+    <button class="button button-block button-stable slidein" ng-click="reload()">Recargar</button>
   </ion-content>
 </ion-view>

@@ -44,54 +44,6 @@ angular.module('starter.controllers', ['ngCordova'])
       console.log($scope.pregunta); 
       console.log($scope.indice);
     });
-
-  // Form data for the login modal
-  /*$scope.loginData = {};
-
-  // Create the login modal that we will use later
-  $ionicModal.fromTemplateUrl('templates/login.html', {
-    scope: $scope
-  }).then(function(modal) {
-    $scope.modal = modal;
-  });
-
-  // Triggered in the login modal to close it
-  $scope.closeLogin = function() {
-    $scope.modal.hide();
-  };*
-
-  // Open the login modal
-  $scope.login = function() {
-    $scope.modal.show();
-  };
-
-  // Perform the login action when the user submits the login form
-  $scope.doLogin = function() {
-    console.log('Doing login', $scope.loginData);
-    
-    var usu = $scope.loginData.username.toLowerCase();
-    $scope.loged = 0;
-    $scope.usuarios.forEach(function(item, index) {
-      console.log(item);
-      if(item == usu && $scope.loged == 0){
-        $scope.loged = 1;
-      }
-    });
-    if($scope.loged == 1){
-      $scope.logusu = usu;
-      //$scope.closeLogin();
-      $scope.modal.hide();
-    }else{
-      alert("Usuario incorrecto. Intente otra vez");
-    }
-   
-
-    // Simulate a login delay. Remove this and replace with your login
-    // code if using a login system
-    /*$timeout(function() {
-      $scope.closeLogin();
-    }, 1000);*
-  };*/
 })
 
 .controller('Login', function($scope, $rootScope) {
@@ -109,13 +61,9 @@ angular.module('starter.controllers', ['ngCordova'])
       $scope.logusu = usu;
       document.getElementById("LogedUsu").className = "card";
       document.getElementById("LogedUsu").innerHTML  = "<center><h4>Usuario Actual: " + usu + "</h4></center>";
-      //UsuarioLogueado.UsuarioLog = usu;
       $rootScope.Loged = 1;
       $rootScope.LogedUsu = usu;
       console.log($rootScope);
-
-      //$scope.closeLogin();
-      //$scope.modal.hide();
     }else{
       alert("Usuario incorrecto. Intente otra vez");
     }
@@ -127,7 +75,7 @@ angular.module('starter.controllers', ['ngCordova'])
 })
 
 
-.controller('PreguntaCtrl', function($scope, $cordovaVibration, $rootScope) {
+.controller('PreguntaCtrl', function($scope, $cordovaVibration, $rootScope, $cordovaFile) {
   $scope.indice = Math.floor((Math.random() * 4));
   $scope.pregunta = [];
   var messagesRef = new Firebase('https://mifirebase-2c106.firebaseio.com/trivia/preguntas/');
@@ -137,18 +85,11 @@ angular.module('starter.controllers', ['ngCordova'])
     $scope.pregunta.push(message.pregunta2);
     $scope.pregunta.push(message.pregunta3);
     $scope.pregunta.push(message.pregunta4);
-    /*console.log($scope.pregunta); 
-    console.log($scope.indice); */
     $scope.responded = 0;
   });
-  /*if($rootScope.Loged != 1){
-    //alert($rootScope.LogedUsu);
-    document.getElementById("texto").innerHTML  = "<center><h4><br><br><br><br>Debe loguearse para poder jugar</h4></center>";
-    document.getElementById("texto").className = "bar bar-footer footerNL";
-  }else{
-    document.getElementById("texto").innerHTML  = " ";
-    document.getElementById("texto").className = " ";
-  }*/
+
+  var jsonRes = { };
+  var count = 0;
 
   $scope.respuesta = function(boton){
     if($scope.responded == 0){
@@ -222,9 +163,8 @@ angular.module('starter.controllers', ['ngCordova'])
 
     //SE RESPONDIÓ LA PREGUNTA
     $scope.responded = 1;
-
+    count++;
     //MANDAR PREGUNTA, RESPUESTAS POSIBLES, Y RESPUESTA ELEGIDA AL PERFIL DEL USUARIO EN FIREBASE
-    //console.log("logueado: " + $rootScope.Loged);
     if($rootScope.Loged == 1){
       var saveUser = new Firebase('https://mifirebase-2c106.firebaseio.com/trivia/usuarios/' + $rootScope.LogedUsu + '/');
       saveUser.push({
@@ -235,6 +175,14 @@ angular.module('starter.controllers', ['ngCordova'])
         "Respuesta": $scope.pregunta[$scope.indice].verdad,
         "Opción_elegida": boton
       });
+      jsonSec[count + "pregunta"] = {
+        "-Pregunta": $scope.pregunta[$scope.indice].pre,
+        "Opcion1": $scope.pregunta[$scope.indice].res1,
+        "Opcion2": $scope.pregunta[$scope.indice].res2,
+        "Opcion3": $scope.pregunta[$scope.indice].res3,
+        "Respuesta": $scope.pregunta[$scope.indice].verdad,
+        "Opción_elegida": boton
+      };
     }
     
   }
@@ -242,7 +190,6 @@ angular.module('starter.controllers', ['ngCordova'])
   $scope.nPregunta = function(){
     //CAMBIAR PREGUNTA
     var ind = Math.floor((Math.random() * 3));
-    //var oldInd = $scope.indice;
     //NO ELEGIR LA MISMA PREGUNTA EN LA QEU SE ESTÁ
     while(ind == $scope.indice){
       ind = Math.floor((Math.random() * 3)); 
@@ -262,15 +209,34 @@ angular.module('starter.controllers', ['ngCordova'])
     document.getElementById("bt3").style = " ";
     document.getElementById("texto").innerHTML  = "";
     document.getElementById("texto").className = "";
+
+    //GUARDAR ARCHIVO
+    try{
+      var secuencia = $scope.secuencia.toString();
+      $cordovaFile.writeFile(cordova.file.dataDirectory, "json.txt", JSON.stringify(jsonSec), true)
+      .then(function (success) {
+        alert(JSON.stringify(jsonSec));
+      }, function (error) {
+        alert("error escritura");
+      });
+    }catch(e){
+      console.log("No es dispositivo movil. No se escribió archivo");
+    }  
   }
 })
 
+.controller('PlaylistsCtrl', function($scope, $cordovaFile) {
+  $scope.reload = function(){
+    try{
+      $cordovaFile.readAsText(cordova.file.dataDirectory, "json.txt")
+      .then(function (success) {
+        alert(success);
+        $scope.json = /*JSON.parse(*/success/*)*/;
+      }, function (error) {
+        alert("Error lectura");
+      });
+    }catch(e){
 
-/**.controller('PianoCtrl', function($scope, $stateParams) {
-})
-
-.controller('ImgCrtl', function($scope, $stateParams) {
-})*/
-
-.controller('PlaylistCtrl', function($scope, $stateParams) {
+    }
+  }
 });

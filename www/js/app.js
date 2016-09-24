@@ -38,20 +38,6 @@ angular.module('starter', ['ionic', 'starter.controllers', 'ngCordova'])
           console.log( 'fail error: ' + msg );
       });
     }
-      /*$cordovaNativeAudio
-        .preloadSimple('success', 'audio/success.mp3')
-        .then(function (msg) {
-          console.log(msg);
-        }, function (error) {
-          alert(error);
-        });
-      $cordovaNativeAudio
-        .preloadSimple('fail', 'audio/fail.mp3')
-        .then(function (msg) {
-          console.log(msg);
-        }, function (error) {
-          alert(error);
-        });*/
   });
 
 
@@ -112,17 +98,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'ngCordova'])
           controller: 'PlaylistsCtrl'
         }
       }
-    })
-
-  .state('app.single', {
-    url: '/playlists/:playlistId',
-    views: {
-      'menuContent': {
-        templateUrl: 'templates/playlist.html',
-        controller: 'PlaylistCtrl'
-      }
-    }
-  });
+    });
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/app/login');
 });
